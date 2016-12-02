@@ -13,19 +13,19 @@ namespace Cet.Core.Expression
             char ch;
             while (reader.TryPeek(out ch))
             {
-                Token token = null;
+                XToken token = null;
                 switch (ch)
                 {
                     case '(':
-                        reader.Tokens.Add(new Token(TokenType.LParen));
+                        reader.Tokens.Add(new XTokenLParen());
                         reader.MoveNext();
                         break;
                     case ')':
-                        reader.Tokens.Add(new Token(TokenType.RParen));
+                        reader.Tokens.Add(new XTokenRParen());
                         reader.MoveNext();
                         break;
-                    case '&': token = ScanTwins(reader, ch, TokenType.OpAnd); break;
-                    case '|': token = ScanTwins(reader, ch, TokenType.OpOr); break;
+                    case '&': token = ScanTwins(reader, ch, new XTokenOperAnd()); break;
+                    case '|': token = ScanTwins(reader, ch, new XTokenOperOr()); break;
                     case '!': token = ScanExclamationSign(reader, ch); break;
                     case '=': token = ScanEqualSign(reader, ch); break;
                     case '<': token = ScanLessSign(reader, ch); break;
@@ -64,7 +64,7 @@ namespace Cet.Core.Expression
         }
 
 
-        private static Token ScanNumber(
+        private static XToken ScanNumber(
             Reader reader,
             char head
             )
@@ -108,11 +108,11 @@ namespace Cet.Core.Expression
             }
 
             var literal = new string(reader.Source, ixold, reader.Index - ixold);
-            return new Token(TokenType.Number, double.Parse(literal));
+            return new XTokenNumber(double.Parse(literal));
         }
 
 
-        private static Token ScanString(
+        private static XToken ScanString(
             Reader reader,
             char head
             )
@@ -124,11 +124,11 @@ namespace Cet.Core.Expression
             var literal = new string(reader.Source, ixold, reader.Index - ixold);
             reader.MoveNext();
 
-            return new Token(TokenType.String, literal);
+            return new XTokenString(literal);
         }
 
 
-        private static Token ScanLiteral(
+        private static XToken ScanLiteral(
             Reader reader,
             char head
             )
@@ -142,16 +142,16 @@ namespace Cet.Core.Expression
 
             switch (literal)
             {
-                case "false": return new Token(TokenType.FalseLiteral, false);
-                case "true": return new Token(TokenType.TrueLiteral, true);
-                case "null": return new Token(TokenType.NullLiteral);
-                case "match": return new Token(TokenType.OpMatch);
-                default: return new Token(TokenType.Identifier, literal);
+                case "false": return new XTokenBoolean(false);
+                case "true": return new XTokenBoolean(true);
+                case "null": return new XTokenNull();
+                case "match": return new XTokenOperMatch();
+                default: return new XTokenRefId(literal);
             }
         }
 
 
-        private static Token ScanRegex(
+        private static XToken ScanRegex(
             Reader reader,
             char head
             )
@@ -175,16 +175,16 @@ namespace Cet.Core.Expression
                 reader.MoveNext();
             }
 
-            var token = new Token(TokenType.MatchParam, literal);
-            token.Param = flags;
+            var token = new XTokenMatchParam(literal);
+            token.Flags = flags;
             return token;
         }
 
 
-        private static Token ScanTwins(
+        private static XToken ScanTwins(
             Reader reader,
             char head,
-            TokenType result
+            XToken result
             )
         {
             reader.MoveNext();
@@ -196,11 +196,11 @@ namespace Cet.Core.Expression
             }
 
             reader.MoveNext();
-            return new Token(result);
+            return result;
         }
 
 
-        private static Token ScanExclamationSign(
+        private static XToken ScanExclamationSign(
             Reader reader,
             char head
             )
@@ -211,16 +211,16 @@ namespace Cet.Core.Expression
             if (reader.TryPeek(out ch) && ch == '=')
             {
                 reader.MoveNext();
-                return new Token(TokenType.OpNotEqual);
+                return new XTokenOperNotEqual();
             }
             else
             {
-                return new Token(TokenType.OpNot);
+                return new XTokenOperNot();
             }
         }
 
 
-        private static Token ScanEqualSign(
+        private static XToken ScanEqualSign(
             Reader reader,
             char head
             )
@@ -233,14 +233,14 @@ namespace Cet.Core.Expression
                 reader.MoveNext();
                 switch (ch)
                 {
-                    case '=': return new Token(TokenType.OpEqual);
+                    case '=': return new XTokenOperEqual();
                 }
             }
             throw new ParserException($"Illegal character found: {ch}");
         }
 
 
-        private static Token ScanLessSign(
+        private static XToken ScanLessSign(
             Reader reader,
             char head
             )
@@ -251,16 +251,16 @@ namespace Cet.Core.Expression
             if (reader.TryPeek(out ch) && ch == '=')
             {
                 reader.MoveNext();
-                return new Token(TokenType.OpLessEqualThan);
+                return new XTokenOperLessOrEqualThan();
             }
             else
             {
-                return new Token(TokenType.OpLessThan);
+                return new XTokenOperLessThan();
             }
         }
 
 
-        private static Token ScanGreaterSign(
+        private static XToken ScanGreaterSign(
             Reader reader,
             char head
             )
@@ -271,11 +271,11 @@ namespace Cet.Core.Expression
             if (reader.TryPeek(out ch) && ch == '=')
             {
                 reader.MoveNext();
-                return new Token(TokenType.OpGreaterEqualThan);
+                return new XTokenOperGreaterOrEqualThan();
             }
             else
             {
-                return new Token(TokenType.OpGreaterThan);
+                return new XTokenOperGreaterThan();
             }
         }
 

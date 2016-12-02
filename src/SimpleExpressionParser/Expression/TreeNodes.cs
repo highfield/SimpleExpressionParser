@@ -7,42 +7,76 @@ namespace Cet.Core.Expression
 {
     public abstract class TreeNodeBase
     {
-        protected TreeNodeBase() { }
-        public Token Token { get; internal set; }
+        protected TreeNodeBase(XToken token)
+        {
+            this.Token = token;
+        }
+
+        public XToken Token { get; }
 
         public abstract IEnumerable<TreeNodeBase> GetChildren();
+
+        public abstract SolverResult Resolve(ISolverContext context);
     }
 
 
-    public class TreeNodeTerminal : TreeNodeBase
+    public sealed class TreeNodeTerminal : TreeNodeBase
     {
+        public TreeNodeTerminal(XToken token) : base(token) { }
+
         public override IEnumerable<TreeNodeBase> GetChildren()
         {
             yield break;
         }
+
+        public override SolverResult Resolve(ISolverContext context)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 
-    public class TreeNodeUnary : TreeNodeBase
+    public sealed class TreeNodeUnary : TreeNodeBase
     {
-        public TreeNodeBase Child { get; internal set; }
+        public TreeNodeUnary(XToken token, TreeNodeBase child) : base(token)
+        {
+            this.Child = child;
+        }
+
+        public TreeNodeBase Child { get; }
 
         public override IEnumerable<TreeNodeBase> GetChildren()
         {
             yield return this.Child;
         }
+
+        public override SolverResult Resolve(ISolverContext context)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 
-    public class TreeNodeBinary : TreeNodeBase
+    public sealed class TreeNodeBinary : TreeNodeBase
     {
-        public TreeNodeBase LeftChild { get; internal set; }
-        public TreeNodeBase RightChild { get; internal set; }
+        public TreeNodeBinary(XToken token, TreeNodeBase left, TreeNodeBase right) : base(token)
+        {
+            this.LeftChild = left;
+            this.RightChild = right;
+        }
+
+        public TreeNodeBase LeftChild { get; }
+        public TreeNodeBase RightChild { get; }
 
         public override IEnumerable<TreeNodeBase> GetChildren()
         {
             yield return this.LeftChild;
             yield return this.RightChild;
+        }
+
+        public override SolverResult Resolve(ISolverContext context)
+        {
+            throw new NotImplementedException();
         }
     }
 }

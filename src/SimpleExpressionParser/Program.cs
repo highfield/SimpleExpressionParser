@@ -113,7 +113,7 @@ namespace Cet.Core.Expression
         private static XElement ToXml(TreeNodeBase node)
         {
             var xelem = new XElement(
-                node.Token.Type.ToString(),
+                node.Token.GetType().Name,
                 node.GetChildren().Select(_ => ToXml(_))
                 );
 
@@ -122,9 +122,10 @@ namespace Cet.Core.Expression
                 xelem.Add(new XAttribute("data", node.Token.Data));
             }
 
-            if (node.Token.Param != null)
+            var mp = node.Token as XTokenMatchParam;
+            if (mp != null)
             {
-                xelem.Add(new XAttribute("param", node.Token.Param));
+                xelem.Add(new XAttribute("flags", mp.Flags));
             }
             return xelem;
         }

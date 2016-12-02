@@ -18,7 +18,7 @@ namespace Cet.Core.Expression
         public readonly char[] Source;
         public int Index { get; private set; }
 
-        public readonly List<Token> Tokens = new List<Token>();
+        public readonly List<XToken> Tokens = new List<XToken>();
 
 
         public bool TryPeek(

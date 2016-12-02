@@ -12,42 +12,42 @@ namespace Cet.Core.Expression
             var reader = new Reader(text ?? string.Empty);
             Scanner.Scan(reader);
 
-            Token partialTree = ResolveParensPair(reader.Tokens.GetEnumerator());
+            XToken partialTree = ResolveParensPair(reader.Tokens.GetEnumerator());
 
             return BuildTree(partialTree);
         }
 
 
-        private static Token ResolveParensPair(IEnumerator<Token> iter)
+        private static XToken ResolveParensPair(IEnumerator<XToken> iter)
         {
-            var list = new List<Token>();
+            var list = new List<XToken>();
             while (iter.MoveNext())
             {
-                Token token = iter.Current;
-                if (token.Type == TokenType.LParen)
+                XToken token = iter.Current;
+                if (token is XTokenLParen)
                 {
                     token = ResolveParensPair(iter);
                 }
-                else if (token.Type == TokenType.RParen)
+                else if (token is XTokenRParen)
                 {
                     break;
                 }
                 list.Add(token);
             }
-            return new Token(TokenType.zTokens, list);
+            return new XTokenSubTree(list);
         }
 
 
-        private static TreeNodeBase BuildTree(Token token)
+        private static TreeNodeBase BuildTree(XToken token)
         {
-            if (token.Type == TokenType.zTokens)
+            if (token is XTokenSubTree)
             {
-                var source = token.Data as IReadOnlyList<Token>;
+                var source = token.Data as IReadOnlyList<XToken>;
                 return BuildTree(source, 0, source.Count - 1);
             }
-            else if (((int)token.Type & 0x0F0000) == 0)
+            else if (token.Arity == 0)
             {
-                return new TreeNodeTerminal() { Token = token };
+                return new TreeNodeTerminal(token);
             }
             else
             {
@@ -57,7 +57,7 @@ namespace Cet.Core.Expression
 
 
         private static TreeNodeBase BuildTree(
-            IReadOnlyList<Token> source,
+            IReadOnlyList<XToken> source,
             int ixa,
             int ixb
             )
@@ -71,33 +71,30 @@ namespace Cet.Core.Expression
                 return BuildTree(source[ixa]);
             }
 
-            for (int prio = 0x0100; prio < 0x1000; prio += 0x100)
+            for (int prio = 1; prio < 16; prio++)
             {
                 for (int i = ixa; i <= ixb; i++)
                 {
-                    Token token = source[i];
-                    int type = (int)token.Type;
-                    if ((type & 0x0F00) == prio)
+                    XToken token = source[i];
+                    if (token.Prio == prio)
                     {
-                        switch ((type & 0x0F0000) >> 16)
+                        switch (token.Arity)
                         {
                             case 1:
-                                return new TreeNodeUnary()
-                                {
-                                    Token = token,
-                                    Child = BuildTree(source, i + 1, ixb)
-                                };
+                                return new TreeNodeUnary(
+                                    token,
+                                    BuildTree(source, i + 1, ixb)
+                                    );
 
                             case 2:
-                                return new TreeNodeBinary()
-                                {
-                                    Token = token,
-                                    LeftChild = BuildTree(source, ixa, i - 1),
-                                    RightChild = BuildTree(source, i + 1, ixb)
-                                };
+                                return new TreeNodeBinary(
+                                    token,
+                                    BuildTree(source, ixa, i - 1),
+                                    BuildTree(source, i + 1, ixb)
+                                    );
 
                             default:
-                                throw new ParserException($"Invalid operator type: {type:X8}");
+                                throw new ParserException($"Invalid operator type: {token}");
                         }
                     }
                 }
