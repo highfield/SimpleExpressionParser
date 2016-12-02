@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E228A788-E9E1-4650-AA63-5F814CDEB6FF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B601F408-A434-43A6-820A-AFE17A616C08}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SimpleExpressionParser", "src\SimpleExpressionParser\SimpleExpressionParser.xproj", "{0BD80939-1763-4379-8354-99A2F59758FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BD80939-1763-4379-8354-99A2F59758FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BD80939-1763-4379-8354-99A2F59758FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BD80939-1763-4379-8354-99A2F59758FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BD80939-1763-4379-8354-99A2F59758FA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0BD80939-1763-4379-8354-99A2F59758FA} = {E228A788-E9E1-4650-AA63-5F814CDEB6FF}
+	EndGlobalSection
+EndGlobal
