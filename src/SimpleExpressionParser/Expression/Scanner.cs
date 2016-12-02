@@ -76,6 +76,7 @@ namespace Cet.Core.Expression
             }
 
             int ixdp = reader.Index;
+            int count = 0;
             char ch;
             while (reader.TryPeek(out ch))
             {
@@ -99,10 +100,11 @@ namespace Cet.Core.Expression
                 {
                     break;
                 }
+                count++;
             }
-            if (ch == '.')
+            if (reader.Source[reader.Index - 1] == '.')
             {
-                throw new ParserException($"Illegal character found: {ch}");
+                throw new ParserException("Illegal character found: .");
             }
 
             var literal = new string(reader.Source, ixold, reader.Index - ixold);

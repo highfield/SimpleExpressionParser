@@ -1,6 +1,9 @@
-﻿using System;
+﻿//#define DOC
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -8,6 +11,8 @@ namespace Cet.Core.Expression
 {
     public class Program
     {
+        static StringBuilder _sb = new StringBuilder();
+
         public static void Main(string[] args)
         {
             Test("");
@@ -53,6 +58,10 @@ namespace Cet.Core.Expression
             Test("! (a && (b && c || d && e) || (g == h && j))");
             Test("!! (((a)==b) && ((((c && ((g)))))))");
 
+#if DOC
+            System.IO.File.WriteAllText(@"i:\temp\parser_output.txt", _sb.ToString());
+#endif
+
             Console.WriteLine("Process complete.");
             Console.ReadKey();
         }
@@ -62,6 +71,29 @@ namespace Cet.Core.Expression
             string text
             )
         {
+#if DOC
+            _sb.AppendLine("Expression:");
+            _sb.AppendFormat("`{0}`", text);
+            _sb.AppendLine();
+            _sb.AppendLine();
+            _sb.AppendLine("Result:");
+            _sb.AppendLine("```");
+            try
+            {
+                TreeNodeBase node = Parser.Parse(text);
+                XElement xelem = ToXml(node);
+                _sb.Append(xelem);
+            }
+            catch (Exception ex)
+            {
+                _sb.Append(ex.Message);
+            }
+            _sb.AppendLine();
+            _sb.AppendLine("```");
+            _sb.AppendLine("***");
+            _sb.AppendLine();
+            _sb.AppendLine();
+#else
             Console.WriteLine($"Expression: {text}");
             try
             {
@@ -74,6 +106,7 @@ namespace Cet.Core.Expression
                 Console.WriteLine(ex.Message);
             }
             Console.WriteLine();
+#endif
         }
 
 
