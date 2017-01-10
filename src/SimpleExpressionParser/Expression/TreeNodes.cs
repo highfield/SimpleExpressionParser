@@ -31,7 +31,7 @@ namespace Cet.Core.Expression
 
         public override SolverResult Resolve(ISolverContext context)
         {
-            throw new NotImplementedException();
+            return this.Token.Resolve(context, null, null, null);
         }
     }
 
@@ -52,7 +52,7 @@ namespace Cet.Core.Expression
 
         public override SolverResult Resolve(ISolverContext context)
         {
-            throw new NotImplementedException();
+            return this.Token.Resolve(context, this.Child, null, null);
         }
     }
 
@@ -76,7 +76,7 @@ namespace Cet.Core.Expression
 
         public override SolverResult Resolve(ISolverContext context)
         {
-            throw new NotImplementedException();
+            return this.Token.Resolve(context, this.LeftChild, this.RightChild, null);
         }
     }
 }

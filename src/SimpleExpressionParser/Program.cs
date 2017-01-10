@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace Cet.Core.Expression
     public class Program
     {
         static StringBuilder _sb = new StringBuilder();
+        static ISolverContext _ctx = new MySolverContext();
 
         public static void Main(string[] args)
         {
@@ -62,6 +64,33 @@ namespace Cet.Core.Expression
             System.IO.File.WriteAllText(@"i:\temp\parser_output.txt", _sb.ToString());
 #endif
 
+            {
+                TreeNodeBase node = Parser.Parse("! (a && (b && c || d && e) || (g == h && j))");
+                const int N = 1000;
+
+                var sw = new Stopwatch();
+                sw.Start();
+
+                SolverResult sr;
+                for (int i = 0; i < N; i++)
+                {
+                    sr = node.Resolve(_ctx);
+                    sr = node.Resolve(_ctx);
+                    sr = node.Resolve(_ctx);
+                    sr = node.Resolve(_ctx);
+                    sr = node.Resolve(_ctx);
+
+                    sr = node.Resolve(_ctx);
+                    sr = node.Resolve(_ctx);
+                    sr = node.Resolve(_ctx);
+                    sr = node.Resolve(_ctx);
+                    sr = node.Resolve(_ctx);
+                }
+
+                sw.Stop();
+                Console.WriteLine($"Elapsed: {sw.ElapsedMilliseconds}ms; {sw.ElapsedMilliseconds * 100.0 / N}us/each");
+            }
+
             Console.WriteLine("Process complete.");
             Console.ReadKey();
         }
@@ -100,11 +129,15 @@ namespace Cet.Core.Expression
                 TreeNodeBase node = Parser.Parse(text);
                 XElement xelem = ToXml(node);
                 Console.WriteLine(xelem);
+
+                SolverResult sr = node.Resolve(_ctx);
+                Console.WriteLine($"Result: {sr.Error ?? sr.Data}");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+            Console.WriteLine();
             Console.WriteLine();
 #endif
         }

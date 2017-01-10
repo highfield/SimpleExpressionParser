@@ -22,9 +22,21 @@ namespace Cet.Core.Expression
         public abstract SolverResult GetValue(XTokenRefId token);
     }
 
-    public class SolverResult
+    public sealed class SolverResult
     {
-        public object Data { get; set; }
-        public Exception Error { get; set; }
+        private SolverResult() { }
+
+        public static SolverResult FromData(object data)
+        {
+            return new SolverResult { Data = data };
+        }
+
+        public static SolverResult FromError(Exception error)
+        {
+            return new SolverResult { Error = error };
+        }
+
+        public object Data { get; private set; }
+        public Exception Error { get; private set; }
     }
 }
