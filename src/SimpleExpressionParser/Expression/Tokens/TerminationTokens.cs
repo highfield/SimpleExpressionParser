@@ -10,9 +10,9 @@ namespace Cet.Core.Expression
     {
         public XTokenNumber(double value) : base(value) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            return SolverResult.FromData(this.Data);
+            return XSolverResult.FromData(this.Data);
         }
     }
 
@@ -21,9 +21,9 @@ namespace Cet.Core.Expression
     {
         public XTokenString(string value) : base(value) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            return SolverResult.FromData(this.Data);
+            return XSolverResult.FromData(this.Data);
         }
     }
 
@@ -33,17 +33,17 @@ namespace Cet.Core.Expression
         public XTokenMatchParam(string value) : base(value) { }
         public string Flags { get; set; }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
             var pattern = this.Data as string;
-            if (pattern == null) return SolverResult.FromData(null);
+            if (pattern == null) return XSolverResult.FromData(null);
 
             var flags = this.Flags ?? string.Empty;
             RegexOptions options = RegexOptions.None;
             if (flags.Contains('i')) options |= RegexOptions.IgnoreCase;
 
             var re = new Regex(pattern, options);
-            return SolverResult.FromData(re);
+            return XSolverResult.FromData(re);
         }
     }
 
@@ -52,9 +52,9 @@ namespace Cet.Core.Expression
     {
         public XTokenBoolean(bool value) : base(value) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            return SolverResult.FromData(this.Data);
+            return XSolverResult.FromData(this.Data);
         }
     }
 
@@ -62,9 +62,9 @@ namespace Cet.Core.Expression
     public sealed class XTokenNull : XToken
     {
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            return SolverResult.FromData(this.Data);
+            return XSolverResult.FromData(this.Data);
         }
     }
 
@@ -73,9 +73,9 @@ namespace Cet.Core.Expression
     {
         public XTokenRefId(string value) : base(value) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            if (context.ReferenceSolver == null) return SolverResult.FromData(null);
+            if (context.ReferenceSolver == null) return XSolverResult.FromData(null);
             return context.ReferenceSolver.GetValue(this);
         }
     }

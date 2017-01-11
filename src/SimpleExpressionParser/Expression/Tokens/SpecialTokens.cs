@@ -8,7 +8,7 @@ namespace Cet.Core.Expression
     public sealed class XTokenLParen : XToken
     {
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
             throw new NotImplementedException();
         }
@@ -18,7 +18,7 @@ namespace Cet.Core.Expression
     public sealed class XTokenRParen : XToken
     {
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
             throw new NotImplementedException();
         }
@@ -29,7 +29,7 @@ namespace Cet.Core.Expression
     {
         public XTokenSubTree(IReadOnlyList<XToken> list) : base(list) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
             throw new NotImplementedException();
         }

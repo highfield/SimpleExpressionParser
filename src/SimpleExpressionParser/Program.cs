@@ -13,7 +13,7 @@ namespace Cet.Core.Expression
     public class Program
     {
         static StringBuilder _sb = new StringBuilder();
-        static ISolverContext _ctx = new MySolverContext();
+        static IXSolverContext _ctx = new MySolverContext();
 
         public static void Main(string[] args)
         {
@@ -33,9 +33,11 @@ namespace Cet.Core.Expression
             Test("myvar  ");
             Test("  w0rd");
             Test("_abc_def_");
+            Test("my.multi.level.reference");
             Test("'single-quoted string'");
             Test("\"double-quoted string\"");
-            Test("'here is a \"nested string\"'");
+            //Test("'here is a \"nested string\"'");
+            //Test(@"'here is a ""nested escaped string""'");
 
             Test("zero == zero  ");
             Test(" black != white");
@@ -51,7 +53,7 @@ namespace Cet.Core.Expression
             Test("!me || you && !they ");
             Test("a==b && c!=d");
             Test("pname match/abc/");
-            Test("pname match /xyz/ig");
+            Test("pname match /xyz/i");
             Test("pname   match /(\\w+)\\s(\\w+)/");
 
             Test("(!me ||you)&&they");
@@ -65,13 +67,13 @@ namespace Cet.Core.Expression
 #endif
 
             {
-                TreeNodeBase node = Parser.Parse("! (a && (b && c || d && e) || (g == h && j))");
+                XTreeNodeBase node = XTreeNodeBase.Parse("! (a && (b && c || d && e) || (g == h && j))");
                 const int N = 1000;
 
                 var sw = new Stopwatch();
                 sw.Start();
 
-                SolverResult sr;
+                XSolverResult sr;
                 for (int i = 0; i < N; i++)
                 {
                     sr = node.Resolve(_ctx);
@@ -123,44 +125,49 @@ namespace Cet.Core.Expression
             _sb.AppendLine();
             _sb.AppendLine();
 #else
-            Console.WriteLine($"Expression: {text}");
+            Console.WriteLine($"Source expression: {text}");
             try
             {
-                TreeNodeBase node = Parser.Parse(text);
-                XElement xelem = ToXml(node);
+                //parsing
+                XTreeNodeBase xtree = XTreeNodeBase.Parse(text);
+
+                //compact serialization
+                var cser = new XTreeCompactSerializer();
+                cser.ShouldPad = true;
+                string xstr = cser.Serialize(xtree);
+                Console.WriteLine($"Serialized: {xstr}");
+
+                //xml serialization
+                var xser = new XTreeXmlSerializer();
+                XElement xelem = xser.Serialize(xtree);
                 Console.WriteLine(xelem);
 
-                SolverResult sr = node.Resolve(_ctx);
+                //evaluation (against the sample context)
+                XSolverResult sr = xtree.Resolve(_ctx);
                 Console.WriteLine($"Result: {sr.Error ?? sr.Data}");
+
+                //verify the compact serialization
+                try
+                {
+                    XTreeNodeBase xtreeAlt = XTreeNodeBase.Parse(xstr);
+                    XElement xelemAlt = xser.Serialize(xtreeAlt);
+                    if (xelem.ToString() != xelemAlt.ToString())
+                    {
+                        //fail!
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Verify error: " + ex.Message);
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Test error: " + ex.Message);
             }
             Console.WriteLine();
             Console.WriteLine();
 #endif
-        }
-
-
-        private static XElement ToXml(TreeNodeBase node)
-        {
-            var xelem = new XElement(
-                node.Token.GetType().Name,
-                node.GetChildren().Select(_ => ToXml(_))
-                );
-
-            if (node.Token.Data != null)
-            {
-                xelem.Add(new XAttribute("data", node.Token.Data));
-            }
-
-            var mp = node.Token as XTokenMatchParam;
-            if (mp != null)
-            {
-                xelem.Add(new XAttribute("flags", mp.Flags));
-            }
-            return xelem;
         }
 
     }

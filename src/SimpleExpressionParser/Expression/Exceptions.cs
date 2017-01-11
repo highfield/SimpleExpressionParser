@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Cet.Core.Expression
 {
-    public class ParserException : Exception
+    public class XParserException : Exception
     {
-        public ParserException(string message) : base(message) { }
-        public ParserException(string message, Exception innerException) : base(message, innerException) { }
+        public XParserException(string message) : base(message) { }
+        public XParserException(string message, Exception innerException) : base(message, innerException) { }
     }
 }

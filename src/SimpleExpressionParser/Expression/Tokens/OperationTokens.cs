@@ -10,20 +10,20 @@ namespace Cet.Core.Expression
     {
         public XTokenOperOr() : base(2, 2, null) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            SolverResult result = na.Resolve(context);
+            XSolverResult result = na.Resolve(context);
             if (result.Error != null) return result;
-            bool value = SolverHelpers.AsBool(result.Data);
+            bool value = XSolverHelpers.AsBool(result.Data);
             if (value)
             {
-                return SolverResult.FromData(value);
+                return XSolverResult.FromData(value);
             }
 
-            result = na.Resolve(context);
+            result = nb.Resolve(context);
             if (result.Error != null) return result;
-            value = SolverHelpers.AsBool(result.Data);
-            return SolverResult.FromData(value);
+            value = XSolverHelpers.AsBool(result.Data);
+            return XSolverResult.FromData(value);
         }
     }
 
@@ -32,20 +32,20 @@ namespace Cet.Core.Expression
     {
         public XTokenOperAnd() : base(2, 3, null) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            SolverResult result = na.Resolve(context);
+            XSolverResult result = na.Resolve(context);
             if (result.Error != null) return result;
-            bool value = SolverHelpers.AsBool(result.Data);
+            bool value = XSolverHelpers.AsBool(result.Data);
             if (value == false)
             {
-                return SolverResult.FromData(value);
+                return XSolverResult.FromData(value);
             }
 
-            result = na.Resolve(context);
+            result = nb.Resolve(context);
             if (result.Error != null) return result;
-            value = SolverHelpers.AsBool(result.Data);
-            return SolverResult.FromData(value);
+            value = XSolverHelpers.AsBool(result.Data);
+            return XSolverResult.FromData(value);
         }
     }
 
@@ -54,16 +54,16 @@ namespace Cet.Core.Expression
     {
         public XTokenOperEqual() : base(2, 7, null) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            SolverResult sra = na.Resolve(context);
+            XSolverResult sra = na.Resolve(context);
             if (sra.Error != null) return sra;
 
-            SolverResult srb = nb.Resolve(context);
+            XSolverResult srb = nb.Resolve(context);
             if (srb.Error != null) return srb;
 
-            bool value = SolverHelpers.Match(sra.Data, srb.Data);
-            return SolverResult.FromData(value);
+            bool value = XSolverHelpers.Match(sra.Data, srb.Data);
+            return XSolverResult.FromData(value);
         }
     }
 
@@ -72,16 +72,16 @@ namespace Cet.Core.Expression
     {
         public XTokenOperNotEqual() : base(2, 7, null) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            SolverResult sra = na.Resolve(context);
+            XSolverResult sra = na.Resolve(context);
             if (sra.Error != null) return sra;
 
-            SolverResult srb = nb.Resolve(context);
+            XSolverResult srb = nb.Resolve(context);
             if (srb.Error != null) return srb;
 
-            bool value = SolverHelpers.Match(sra.Data, srb.Data);
-            return SolverResult.FromData(value == false);
+            bool value = XSolverHelpers.Match(sra.Data, srb.Data);
+            return XSolverResult.FromData(value == false);
         }
     }
 
@@ -90,16 +90,16 @@ namespace Cet.Core.Expression
     {
         public XTokenOperLessThan() : base(2, 7, null) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            SolverResult sra = na.Resolve(context);
+            XSolverResult sra = na.Resolve(context);
             if (sra.Error != null) return sra;
 
-            SolverResult srb = nb.Resolve(context);
+            XSolverResult srb = nb.Resolve(context);
             if (srb.Error != null) return srb;
 
-            int value = SolverHelpers.Compare(sra.Data, srb.Data);
-            return SolverResult.FromData(value < 0);
+            int value = XSolverHelpers.Compare(sra.Data, srb.Data);
+            return XSolverResult.FromData(value < 0);
         }
     }
 
@@ -108,16 +108,16 @@ namespace Cet.Core.Expression
     {
         public XTokenOperLessOrEqualThan() : base(2, 7, null) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            SolverResult sra = na.Resolve(context);
+            XSolverResult sra = na.Resolve(context);
             if (sra.Error != null) return sra;
 
-            SolverResult srb = nb.Resolve(context);
+            XSolverResult srb = nb.Resolve(context);
             if (srb.Error != null) return srb;
 
-            int value = SolverHelpers.Compare(sra.Data, srb.Data);
-            return SolverResult.FromData(value <= 0);
+            int value = XSolverHelpers.Compare(sra.Data, srb.Data);
+            return XSolverResult.FromData(value <= 0);
         }
     }
 
@@ -126,16 +126,16 @@ namespace Cet.Core.Expression
     {
         public XTokenOperGreaterThan() : base(2, 7, null) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            SolverResult sra = na.Resolve(context);
+            XSolverResult sra = na.Resolve(context);
             if (sra.Error != null) return sra;
 
-            SolverResult srb = nb.Resolve(context);
+            XSolverResult srb = nb.Resolve(context);
             if (srb.Error != null) return srb;
 
-            int value = SolverHelpers.Compare(sra.Data, srb.Data);
-            return SolverResult.FromData(value > 0);
+            int value = XSolverHelpers.Compare(sra.Data, srb.Data);
+            return XSolverResult.FromData(value > 0);
         }
     }
 
@@ -144,16 +144,16 @@ namespace Cet.Core.Expression
     {
         public XTokenOperGreaterOrEqualThan() : base(2, 7, null) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            SolverResult sra = na.Resolve(context);
+            XSolverResult sra = na.Resolve(context);
             if (sra.Error != null) return sra;
 
-            SolverResult srb = nb.Resolve(context);
+            XSolverResult srb = nb.Resolve(context);
             if (srb.Error != null) return srb;
 
-            int value = SolverHelpers.Compare(sra.Data, srb.Data);
-            return SolverResult.FromData(value >= 0);
+            int value = XSolverHelpers.Compare(sra.Data, srb.Data);
+            return XSolverResult.FromData(value >= 0);
         }
     }
 
@@ -162,22 +162,22 @@ namespace Cet.Core.Expression
     {
         public XTokenOperMatch() : base(2, 7, null) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            SolverResult sra = na.Resolve(context);
+            XSolverResult sra = na.Resolve(context);
             if (sra.Error != null) return sra;
 
-            SolverResult srb = nb.Resolve(context);
+            XSolverResult srb = nb.Resolve(context);
             if (srb.Error != null) return srb;
 
             var s = sra.Data as string;
-            if (s == null) return SolverResult.FromData(false);
+            if (s == null) return XSolverResult.FromData(false);
 
             var re = srb.Data as Regex;
-            if (re == null) return SolverResult.FromData(false);
+            if (re == null) return XSolverResult.FromData(false);
 
             Match match = re.Match(s);
-            return SolverResult.FromData(match.Success);
+            return XSolverResult.FromData(match.Success);
         }
     }
 
@@ -186,12 +186,12 @@ namespace Cet.Core.Expression
     {
         public XTokenOperNot() : base(1, 10, null) { }
 
-        public override SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc)
+        public override XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc)
         {
-            SolverResult result = na.Resolve(context);
+            XSolverResult result = na.Resolve(context);
             if (result.Error != null) return result;
-            bool value = SolverHelpers.AsBool(result.Data);
-            return SolverResult.FromData(value == false);
+            bool value = XSolverHelpers.AsBool(result.Data);
+            return XSolverResult.FromData(value == false);
         }
     }
 

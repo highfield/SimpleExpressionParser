@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Cet.Core.Expression
 {
-    public static class SolverHelpers
+    public static class XSolverHelpers
     {
 
         public static bool AsBool(object data)

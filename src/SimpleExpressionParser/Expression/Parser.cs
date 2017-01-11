@@ -5,20 +5,10 @@ using System.Threading.Tasks;
 
 namespace Cet.Core.Expression
 {
-    public static class Parser
+    internal static class Parser
     {
-        public static TreeNodeBase Parse(string text)
-        {
-            var reader = new Reader(text ?? string.Empty);
-            Scanner.Scan(reader);
 
-            XToken partialTree = ResolveParensPair(reader.Tokens.GetEnumerator());
-
-            return BuildTree(partialTree);
-        }
-
-
-        private static XToken ResolveParensPair(IEnumerator<XToken> iter)
+        internal static XToken ResolveParensPair(IEnumerator<XToken> iter)
         {
             var list = new List<XToken>();
             while (iter.MoveNext())
@@ -38,7 +28,7 @@ namespace Cet.Core.Expression
         }
 
 
-        private static TreeNodeBase BuildTree(XToken token)
+        internal static XTreeNodeBase BuildTree(XToken token)
         {
             if (token is XTokenSubTree)
             {
@@ -47,16 +37,16 @@ namespace Cet.Core.Expression
             }
             else if (token.Arity == 0)
             {
-                return new TreeNodeTerminal(token);
+                return new XTreeNodeTerminal(token);
             }
             else
             {
-                throw new ParserException($"Unexpected token: {token}");
+                throw new XParserException($"Unexpected token: {token}");
             }
         }
 
 
-        private static TreeNodeBase BuildTree(
+        private static XTreeNodeBase BuildTree(
             IReadOnlyList<XToken> source,
             int ixa,
             int ixb
@@ -64,7 +54,7 @@ namespace Cet.Core.Expression
         {
             if (ixa > ixb)
             {
-                throw new ParserException("Empty expression.");
+                throw new XParserException("Empty expression.");
             }
             else if (ixa == ixb)
             {
@@ -81,26 +71,26 @@ namespace Cet.Core.Expression
                         switch (token.Arity)
                         {
                             case 1:
-                                return new TreeNodeUnary(
+                                return new XTreeNodeUnary(
                                     token,
                                     BuildTree(source, i + 1, ixb)
                                     );
 
                             case 2:
-                                return new TreeNodeBinary(
+                                return new XTreeNodeBinary(
                                     token,
                                     BuildTree(source, ixa, i - 1),
                                     BuildTree(source, i + 1, ixb)
                                     );
 
                             default:
-                                throw new ParserException($"Invalid operator type: {token}");
+                                throw new XParserException($"Invalid operator type: {token}");
                         }
                     }
                 }
             }
 
-            throw new ParserException("Missing operator.");
+            throw new XParserException("Missing operator.");
         }
 
     }

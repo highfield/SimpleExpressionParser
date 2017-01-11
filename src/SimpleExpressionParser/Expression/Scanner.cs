@@ -51,7 +51,7 @@ namespace Cet.Core.Expression
                         }
                         else
                         {
-                            throw new ParserException($"Illegal character found: {ch}");
+                            throw new XParserException($"Illegal character found: {ch}");
                         }
                         break;
                 }
@@ -93,7 +93,7 @@ namespace Cet.Core.Expression
                     }
                     else
                     {
-                        throw new ParserException($"Illegal character found: {ch}");
+                        throw new XParserException($"Illegal character found: {ch}");
                     }
                 }
                 else
@@ -104,7 +104,7 @@ namespace Cet.Core.Expression
             }
             if (reader.Source[reader.Index - 1] == '.')
             {
-                throw new ParserException("Illegal character found: .");
+                throw new XParserException("Illegal character found: .");
             }
 
             var literal = new string(reader.Source, ixold, reader.Index - ixold);
@@ -133,7 +133,7 @@ namespace Cet.Core.Expression
             char head
             )
         {
-            Func<char, bool> predicate = _ => char.IsLetterOrDigit(_) || _ == '_';
+            Func<char, bool> predicate = _ => char.IsLetterOrDigit(_) || "_.".Contains(_);
 
             int ixold = reader.Index;
             char ch;
@@ -165,11 +165,11 @@ namespace Cet.Core.Expression
 
             //flags
             var flags = string.Empty;
-            while (reader.TryPeek(out ch) && char.IsWhiteSpace(ch) == false)
+            while (reader.TryPeek(out ch) && char.IsWhiteSpace(ch) == false && char.IsLetterOrDigit(ch))
             {
-                if ("gi".IndexOf(ch) < 0)
+                if ("i".IndexOf(ch) < 0)
                 {
-                    throw new ParserException($"Unsupported Regex match flag: {ch}");
+                    throw new XParserException($"Unsupported Regex match flag: {ch}");
                 }
                 flags += ch;
                 reader.MoveNext();
@@ -192,7 +192,7 @@ namespace Cet.Core.Expression
             char ch;
             if (reader.TryPeek(out ch) == false || ch != head)
             {
-                throw new ParserException($"Illegal character found: {ch}");
+                throw new XParserException($"Illegal character found: {ch}");
             }
 
             reader.MoveNext();
@@ -236,7 +236,7 @@ namespace Cet.Core.Expression
                     case '=': return new XTokenOperEqual();
                 }
             }
-            throw new ParserException($"Illegal character found: {ch}");
+            throw new XParserException($"Illegal character found: {ch}");
         }
 
 
@@ -276,6 +276,36 @@ namespace Cet.Core.Expression
             else
             {
                 return new XTokenOperGreaterThan();
+            }
+        }
+
+
+        private class CharArrayWriter
+        {
+            private char[] _array = new char[100];
+            public char[] Buffer
+            {
+                get { return this._array; }
+            }
+
+            private int _count;
+            public int Count
+            {
+                get { return this._count; }
+            }
+
+            public void Add(char ch)
+            {
+                this._array[this._count] = ch;
+                if (++this._count > this._array.Length)
+                {
+                    Array.Resize(ref this._array, this._array.Length + 100);
+                }
+            }
+
+            public override string ToString()
+            {
+                return new string(this._array, 0, this._count);
             }
         }
 

@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace Cet.Core.Expression
 {
-    class MySolverContext : ISolverContext
+    class MySolverContext : IXSolverContext
     {
-        public IReferenceSolver ReferenceSolver { get; } = new MyReferenceSolver();
+        public IXReferenceSolver ReferenceSolver { get; } = new MyReferenceSolver();
     }
 
-    class MyReferenceSolver : IReferenceSolver
+    class MyReferenceSolver : IXReferenceSolver
     {
         private Dictionary<string, object> _bag = new Dictionary<string, object>()
         {
@@ -43,14 +43,14 @@ namespace Cet.Core.Expression
             ["pname"] = "very long text which contains 'abcdefgh'...",
         };
 
-        public SolverResult GetValue(XTokenRefId token)
+        public XSolverResult GetValue(XTokenRefId token)
         {
             var refId = token.Data as string;
-            if (string.IsNullOrEmpty(refId)) return SolverResult.FromData(null);
+            if (string.IsNullOrEmpty(refId)) return XSolverResult.FromData(null);
 
             object value;
             this._bag.TryGetValue(refId, out value);
-            return SolverResult.FromData(value);
+            return XSolverResult.FromData(value);
         }
     }
 }

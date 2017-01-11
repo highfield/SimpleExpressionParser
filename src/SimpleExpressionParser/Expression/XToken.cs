@@ -27,7 +27,7 @@ namespace Cet.Core.Expression
         public object Data { get; }
 
 
-        public abstract SolverResult Resolve(ISolverContext context, TreeNodeBase na, TreeNodeBase nb, TreeNodeBase nc);
+        public abstract XSolverResult Resolve(IXSolverContext context, XTreeNodeBase na, XTreeNodeBase nb, XTreeNodeBase nc);
 
 
         public override string ToString()
