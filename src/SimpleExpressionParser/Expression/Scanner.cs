@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -75,40 +76,103 @@ namespace Cet.Core.Expression
                 reader.MoveNext();
             }
 
-            int ixdp = reader.Index;
-            int count = 0;
+            int status = 0;
             char ch;
             while (reader.TryPeek(out ch))
             {
-                if (char.IsDigit(ch))
+                if (status == 0)
                 {
-                    reader.MoveNext();
-                }
-                else if (ch == '.')
-                {
-                    if (ixdp < reader.Index)
+                    //integer part of mantissa (first digit)
+                    if (char.IsDigit(ch))
                     {
-                        ixdp = reader.Index;
-                        reader.MoveNext();
+                        status = 1;
                     }
                     else
                     {
                         throw new XParserException($"Illegal character found: {ch}");
                     }
                 }
-                else
+                else if (status == 1)
                 {
-                    break;
+                    //integer part of mantissa
+                    if (char.IsDigit(ch))
+                    {
+                        //OK
+                    }
+                    else if (ch == '.')
+                    {
+                        status = 10;
+                    }
+                    else if ("Ee".Contains(ch))
+                    {
+                        status = 20;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                count++;
-            }
-            if (reader.Source[reader.Index - 1] == '.')
-            {
-                throw new XParserException("Illegal character found: .");
+                else if (status == 10)
+                {
+                    //fractional part of mantissa (first digit)
+                    if (char.IsDigit(ch))
+                    {
+                        status = 11;
+                    }
+                    else
+                    {
+                        throw new XParserException($"Illegal character found: {ch}");
+                    }
+                }
+                else if (status == 11)
+                {
+                    //fractional part of mantissa
+                    if (char.IsDigit(ch))
+                    {
+                        //OK
+                    }
+                    else if ("Ee".Contains(ch))
+                    {
+                        status = 20;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else if (status == 20)
+                {
+                    //exponent (first digit)
+                    if (char.IsDigit(ch))
+                    {
+                        status = 21;
+                    }
+                    else if ("-+".Contains(ch))
+                    {
+                        status = 21;
+                    }
+                    else
+                    {
+                        throw new XParserException($"Illegal character found: {ch}");
+                    }
+                }
+                else if (status == 21)
+                {
+                    //exponent
+                    if (char.IsDigit(ch))
+                    {
+                        //OK
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                reader.MoveNext();
             }
 
             var literal = new string(reader.Source, ixold, reader.Index - ixold);
-            return new XTokenNumber(double.Parse(literal));
+            return new XTokenNumber(double.Parse(literal, CultureInfo.InvariantCulture));
         }
 
 

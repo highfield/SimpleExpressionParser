@@ -27,6 +27,9 @@ namespace Cet.Core.Expression
             Test(" +7 ");
             Test(" 3.151927 ");
             Test(" +2.718 ");
+            Test("1.6e-19");
+            Test(" 6.022E23 ");
+            Test(" 5E-1 ");
             Test(" .5 ");   //should throw
             Test(" -.5 ");   //should throw
             Test(" +5. ");   //should throw
