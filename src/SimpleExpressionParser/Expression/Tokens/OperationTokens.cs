@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Cet.Core.Expression
 {
-    public sealed class XTokenOperOr : XToken
+    public interface ITokenAssociative { }
+
+
+    public sealed class XTokenOperOr : XToken, ITokenAssociative
     {
         public XTokenOperOr() : base(2, 2, null) { }
 
@@ -28,7 +31,7 @@ namespace Cet.Core.Expression
     }
 
 
-    public sealed class XTokenOperAnd : XToken
+    public sealed class XTokenOperAnd : XToken, ITokenAssociative
     {
         public XTokenOperAnd() : base(2, 3, null) { }
 

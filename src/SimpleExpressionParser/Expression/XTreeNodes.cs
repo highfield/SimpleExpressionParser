@@ -90,4 +90,20 @@ namespace Cet.Core.Expression
             return this.Token.Resolve(context, this.LeftChild, this.RightChild, null);
         }
     }
+
+
+    public static class XTreeNode
+    {
+
+        public static XTreeNodeBase AlwaysFalse()
+        {
+            return new XTreeNodeTerminal(new XTokenBoolean(false));
+        }
+
+        public static XTreeNodeBase AlwaysTrue()
+        {
+            return new XTreeNodeTerminal(new XTokenBoolean(true));
+        }
+
+    }
 }
